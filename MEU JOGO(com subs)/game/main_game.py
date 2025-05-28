@@ -7,8 +7,6 @@ from ui.hud import draw_fireball_cooldown
 from ui.hud import draw_hollowpurple_cooldown
 from classes.spells import *
 
-   # 20% normal speed
-
 
 def main_game(screen, FONT, SMALL_FONT, TINY_FONT, TITLE_FONT, clock):
     player = Player(current_width // 2 - 32, current_height // 2 - 32)
