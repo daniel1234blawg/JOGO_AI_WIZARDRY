@@ -21,11 +21,11 @@ def draw_hud(surface, player, SMALL_FONT):
     draw_health_bar(surface, bar_x, bar_y, bar_w, bar_h, player.health, player.max_health, SMALL_FONT)
 
 #firebal cooldown
-def draw_fireball_cooldown(surface, fireball, keybinds, x, y, w, h, font, color):
+def draw_fireball_cooldown(surface, fireball, keybinds, x, y, w, h, font, color, cooldown_now):
     """Desenha barra de cooldown do fireball com visual melhorado"""
     pygame.draw.rect(surface, DARK_GRAY, (x, y, w, h), border_radius=8)
     pygame.draw.rect(surface, WHITE, (x, y, w, h), 2, border_radius=8)
-    elapsed = time.time() - fireball.last_cast
+    elapsed = cooldown_now - fireball.last_cast
     pct = min(elapsed / fireball.cooldown, 1.0)
     if pct < 1.0:
         progress_color = (255, 0, 0)
@@ -42,12 +42,15 @@ def draw_fireball_cooldown(surface, fireball, keybinds, x, y, w, h, font, color)
     else:
         cd_surf = font.render("PRONTO", True, GREEN)
     surface.blit(cd_surf, (x + w - cd_surf.get_width() - 10, y + h // 2 - cd_surf.get_height() // 2))
-#delete dps
-def draw_hollowpurple_cooldown(surface, hollowpurple, keybinds, x, y, w, h, font, color):
+
+
+
+
+def draw_hollowpurple_cooldown(surface, hollowpurple, keybinds, x, y, w, h, font, color, cooldown_now):
     """Desenha barra de cooldown do fireball com visual melhorado"""
     pygame.draw.rect(surface, DARK_GRAY, (x, y, w, h), border_radius=8)
     pygame.draw.rect(surface, WHITE, (x, y, w, h), 2, border_radius=8)
-    elapsed = time.time() - hollowpurple.last_cast
+    elapsed = cooldown_now - hollowpurple.last_cast
     pct = min(elapsed / hollowpurple.cooldown, 1.0)
     if pct < 1.0:
         progress_color = (255, 0, 0)
