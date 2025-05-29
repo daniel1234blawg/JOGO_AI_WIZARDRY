@@ -60,7 +60,7 @@ class ProjectileFireball:
         self.frame_timer = 1
         self.frame_speed = 5 # frames to wait before advancing (ajustavel for speed)
 
-    def update(self):
+    def update(self, dt):
         self.x += self.dx
         self.y += self.dy
         self.rect.x = int(self.x - self.radius)
@@ -128,7 +128,7 @@ class ProjectileHollowPurple:
         self.frame_timer = 1
         self.frame_speed = 5 # frames to wait before advancing (ajustavel for speed)
 
-    def update(self):
+    def update(self, dt):
         self.x += self.dx
         self.y += self.dy
         self.rect.x = int(self.x - self.radius)

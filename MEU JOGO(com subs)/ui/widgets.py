@@ -57,30 +57,65 @@ class Button:
         return self.rect.collidepoint(mouse_pos) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1
 
 class Slider:
-    def __init__(self, x, y, w, h, font, value=75):
+    def __init__(self, x, y, w, h, font, value=75, vertical=False):
+        self.vertical = vertical
         self.font = font
         self.rect = pygame.Rect(x, y, w, h)
         self.value = value
         self.dragging = False
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
-            self.dragging = True
-        elif event.type == pygame.MOUSEBUTTONUP:
-            self.dragging = False
-        elif event.type == pygame.MOUSEMOTION and self.dragging:
-            rel_x = event.pos[0] - self.rect.x
-            rel_x = max(0, min(rel_x, self.rect.width))
-            self.value = int((rel_x / self.rect.width) * 100)
+        if self.vertical:
+            if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+                self.dragging = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.dragging = False
+            elif event.type == pygame.MOUSEMOTION and self.dragging:
+                rel_y = event.pos[1] - self.rect.y
+                rel_y = max(0, min(rel_y, self.rect.height))
+                self.value = 100 - int((rel_y / self.rect.height) * 100)
+        else:
+            if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+                self.dragging = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.dragging = False
+            elif event.type == pygame.MOUSEMOTION and self.dragging:
+                rel_x = event.pos[0] - self.rect.x
+                rel_x = max(0, min(rel_x, self.rect.width))
+                self.value = int((rel_x / self.rect.width) * 100)
 
     def draw(self, surface):
-        pygame.draw.rect(surface, DARK_GRAY, self.rect, border_radius=12)
-        pygame.draw.rect(surface, MAGIC_PURPLE, self.rect, 2, border_radius=12)
-        fill_rect = pygame.Rect(self.rect.x + 2, self.rect.y + 2,
-                                int((self.rect.width - 4) * (self.value / 100)), self.rect.height - 4)
-        pygame.draw.rect(surface, BLUE, fill_rect, border_radius=10)
-        knob_x = self.rect.x + int(self.rect.width * (self.value / 100))
-        pygame.draw.circle(surface, MAGIC_GOLD, (knob_x, self.rect.centery), self.rect.height // 2 + 4)
-        pygame.draw.circle(surface, WHITE, (knob_x, self.rect.centery), self.rect.height // 2 + 1, 2)
-        txt = self.font.render(f"{self.value}%", True, MAGIC_GOLD)
-        surface.blit(txt, (self.rect.right + 20, self.rect.centery - txt.get_height() // 2))
+        if self.vertical:
+            # Vertical drawing logic
+            pygame.draw.rect(surface, DARK_GRAY, self.rect, border_radius=12)
+            pygame.draw.rect(surface, MAGIC_PURPLE, self.rect, 2, border_radius=12)
+
+            # Calculate fill height based on value
+            fill_height = int(self.rect.height * (self.value / 100))
+            fill_rect = pygame.Rect(
+                self.rect.x + 2,
+                self.rect.bottom - fill_height - 2,
+                self.rect.width - 4,
+                fill_height
+            )
+            pygame.draw.rect(surface, BLUE, fill_rect, border_radius=10)
+
+            # Draw knob
+            knob_y = self.rect.bottom - int(self.rect.height * (self.value / 100))
+            pygame.draw.circle(surface, MAGIC_GOLD, (self.rect.centerx, knob_y), self.rect.width // 2 + 4)
+            pygame.draw.circle(surface, WHITE, (self.rect.centerx, knob_y), self.rect.width // 2 + 1, 2)
+
+            # Volume text
+            txt = self.font.render(f"{self.value}%", True, MAGIC_GOLD)
+            surface.blit(txt, (self.rect.centerx - txt.get_width() // 2, self.rect.top - 30))
+        else:
+            pygame.draw.rect(surface, DARK_GRAY, self.rect, border_radius=12)
+            pygame.draw.rect(surface, MAGIC_PURPLE, self.rect, 2, border_radius=12)
+            fill_rect = pygame.Rect(self.rect.x + 2, self.rect.y + 2,
+                                    int((self.rect.width - 4) * (self.value / 100)), self.rect.height - 4)
+            pygame.draw.rect(surface, BLUE, fill_rect, border_radius=10)
+            knob_x = self.rect.x + int(self.rect.width * (self.value / 100))
+            pygame.draw.circle(surface, MAGIC_GOLD, (knob_x, self.rect.centery), self.rect.height // 2 + 4)
+            pygame.draw.circle(surface, WHITE, (knob_x, self.rect.centery), self.rect.height // 2 + 1, 2)
+            txt = self.font.render(f"{self.value}%", True, MAGIC_GOLD)
+            surface.blit(txt, (self.rect.right + 20, self.rect.centery - txt.get_height() // 2))

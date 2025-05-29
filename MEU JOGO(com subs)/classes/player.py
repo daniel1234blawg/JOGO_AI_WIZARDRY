@@ -4,9 +4,11 @@ from settings import BLUE, keybinds, current_width, current_height
 from assets import PLAYER_SPRITES
 from utils import scale_image_aspect
 from classes.spells import Fireball, HollowPurple
+
+
 class Player:
     def __init__(self, x, y):
-        self.scale = 1.8  # multiplier for player sprite
+        self.scale = 1.8 #multiplier for player sprite size.
         self.rect = pygame.Rect(x, y, 40 * self.scale, 60 * self.scale)
         self.x = float(x)
         self.y = float(y)
@@ -17,7 +19,7 @@ class Player:
         self.health = 100
         self.max_health = 100
 
-    def update(self, keys, dt):
+    def update(self, keys, dt, game_map):
         dx, dy = 0, 0
         if any(keys[k] for k in keybinds["move_up"]): dy -= 1
         if any(keys[k] for k in keybinds["move_down"]): dy += 1
@@ -36,10 +38,12 @@ class Player:
                 self.facing = "down"
             elif dy < 0:
                 self.facing = "up"
-        self.x += dx * self.speed * dt
-        self.y += dy * self.speed * dt
-        self.x = max(0, min(self.x, current_width - self.rect.width))
-        self.y = max(0, min(self.y, current_height - self.rect.height))
+
+        new_x = self.x + dx * self.speed * dt
+        new_y = self.y + dy * self.speed * dt
+        if not game_map.is_blocked(new_x, new_y):
+            self.x = new_x
+            self.y = new_y
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 
